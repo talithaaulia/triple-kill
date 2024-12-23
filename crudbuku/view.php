@@ -3,22 +3,9 @@ include("connect.php");
 
 class BookDetailsPage {
     private $conn;
-    private $books = []; // Menyimpan semua buku
 
     public function __construct($conn) {
         $this->conn = $conn;
-        $this->loadBooks();
-    }
-
-    private function loadBooks() {
-        $sql = "SELECT * FROM book";
-        $result = mysqli_query($this->conn, $sql);
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $this->books[] = $row; // Tambahkan setiap buku ke array
-            }
-        }
     }
 
     public function displayBookDetails() {
@@ -30,18 +17,16 @@ class BookDetailsPage {
                 body {
                     font-family: 'Arial', sans-serif;
                     margin: 0;
-                    padding: 50px;
-                    background-color: orange;
+                    padding: 50px ;
+                    background-color: orange; /* Ganti dengan warna background yang diinginkan */
                 }
 
                 .container {
                     margin: 20px;
-                    background-color: #fff;
+                    background-color: #fff; /* Ganti dengan warna background yang diinginkan */
                     padding: 20px;
                     border-radius: 8px;
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    width: 60%;
-                    text-align: center;
                 }
 
                 header {
@@ -53,12 +38,13 @@ class BookDetailsPage {
 
                 h1 {
                     margin: 0;
-                    color: #333;
+                    color: #333; /* Ganti dengan warna teks yang diinginkan */
                 }
 
                 .btn {
                     display: inline-block;
                     padding: 10px 20px;
+                    margin-right: 50px;
                     font-size: 16px;
                     text-align: center;
                     text-decoration: none;
@@ -73,6 +59,7 @@ class BookDetailsPage {
                     background-color: #f5f5f5;
                     padding: 20px;
                     margin-top: 20px;
+                    text-align: center;
                 }
 
                 img {
@@ -80,12 +67,18 @@ class BookDetailsPage {
                     height: auto;
                     margin-bottom: 20px;
                     border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 }
 
-                .navigation {
-                    display: flex;
-                    justify-content: space-between;
+                h3 {
                     margin-top: 20px;
+                    color: #333; /* Ganti dengan warna teks yang diinginkan */
+                }
+
+                p {
+                    margin-bottom: 20px;
+                    color: #555; /* Ganti dengan warna teks yang diinginkan */
+                    font-size: 25px;
                 }
             </style>
         </head>
@@ -97,54 +90,55 @@ class BookDetailsPage {
                         <a href="login.php" class="btn">Logout</a>
                     </div>
                 </header>
-                <div class="book-details" id="book-details"></div>
+                <div class="book-details">
+                    <?php
+                    if (isset($_GET['id'])) {
+                        $id = $_GET['id'];
+                        $sql = "SELECT * FROM book WHERE id = $id";
+                        $result = mysqli_query($this->conn, $sql);
 
-                <div class="navigation">
-                    <button class="btn" id="prevBtn" onclick="prevBook()">Back</button>
-                    <button class="btn" id="nextBtn" onclick="nextBook()">Next</button>
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            $row = mysqli_fetch_array($result);
+                            $this->displayBookInfo($row);
+                        } else {
+                            echo "<h3>No books found</h3>";
+                        }
+                    } else {
+                        echo "<h3>No 'id' parameter found</h3>";
+                    }
+                    ?>
                 </div>
             </div>
-
-            <script>
-                let books = <?php echo json_encode($this->books); ?>;
-                let currentIndex = 0;
-
-                function displayBook(index) {
-                    const bookDetails = document.getElementById('book-details');
-                    const book = books[index];
-                    
-                    bookDetails.innerHTML = `
-                        ${book.COVER ? `<img src="${book.COVER}" alt="Cover Image">` : "<p>No cover image available.</p>"}
-                        <h3>Judul:</h3><p>${book.title}</p>
-                        <h3>Penulis:</h3><p>${book.author}</p>
-                        <h3>Genre:</h3><p>${book.type}</p>
-                        <h3>Deskripsi:</h3><p>${book.description ? book.description : "No description available."}</p>
-                    `;
-
-                    // Menonaktifkan tombol jika tidak ada halaman selanjutnya atau sebelumnya
-                    document.getElementById("prevBtn").disabled = currentIndex === 0;
-                    document.getElementById("nextBtn").disabled = currentIndex === books.length - 1;
-                }
-
-                function nextBook() {
-                    if (currentIndex < books.length - 1) {
-                        currentIndex++;
-                        displayBook(currentIndex);
-                    }
-                }
-
-                function prevBook() {
-                    if (currentIndex > 0) {
-                        currentIndex--;
-                        displayBook(currentIndex);
-                    }
-                }
-
-                // Tampilkan buku pertama saat halaman dimuat
-                displayBook(currentIndex);
-            </script>
         </body>
         </html>
+        <?php
+    }
+
+    private function displayBookInfo($row) {
+        ?>
+        <?php if (isset($row["COVER"])) : ?>
+            <img src="<?php echo $row["COVER"]; ?>" alt="Cover Image">
+        <?php else : ?>
+            <p>No cover image available.</p>
+        <?php endif; ?>
+    
+        <h3>Judul:</h3>
+        <p><?php echo $row["title"]; ?></p>
+    
+        <h3>Penulis:</h3>
+        <p><?php echo $row["author"]; ?></p>
+    
+        <h3>Genre:</h3>
+        <p><?php echo $row["type"]; ?></p>
+    
+        <?php if (isset($row["description"])) : ?>
+            <div>
+                <h3>Deskripsi:</h3>
+                <p class="book-info"><?php echo nl2br($row["description"]); ?></p>
+            </div>
+        <?php else : ?>
+            <p>No description available.</p>
+        <?php endif; ?>
         <?php
     }
 }

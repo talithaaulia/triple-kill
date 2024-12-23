@@ -1,3 +1,28 @@
+<?php
+// Assuming 'connect.php' is included
+include('connect.php');
+
+class Book {
+    public $id;
+    public $title;
+    public $author;
+    public $type;
+    public $file_temp; // Renamed property for the temporary file
+
+    public function __construct($id, $title, $author, $type, $file_temp) {
+        $this->id = $id;
+        $this->title = $title;
+        $this->author = $author;
+        $this->type = $type;
+        $this->file_temp = $file_temp; // Assign the temporary file path
+    }
+
+    public function displayInfo() {
+        echo "ID: $this->id, Title: $this->title, Author: $this->author, Type: $this->type";
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,106 +31,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List Dongeng</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('perpustakaan.jpg');
-            background-size: cover;
-            background-position: center;
-            color: #000;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('perpustakaan.jpg'); /* Menggunakan gambar sebagai latar belakang */
+        background-size: cover; /* Menutupi seluruh area latar belakang */
+        background-position: center; /* Posisi gambar di tengah */
+        color: #000; /* Warna teks hitam agar kontras dengan latar belakang gambar */
+        margin: 0;
+        padding: 0;
+    }
 
-        h1 {
-            margin: 0;
-            color: black;
-            font-size: 36px;
-        }
+    h1 {
+        margin: 0;
+        color: black; /* Warna teks judul, bisa disesuaikan */
+        font-size: 36px; /* Ukuran font judul */
+    }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%; 
-            max-width: 1200px; 
-            margin: 20px auto; 
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px; 
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .btn-warning {
+        background-color: #FFA500; /* Jingga */
+        color: black; /* Putih agar kontras dengan latar belakang oranye */
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%; 
-            margin-top: 40px;
-            flex-direction: column; 
-        }
+    .container {
+        width: 80%;
+        margin: 100px auto;
+        background-color: white; /* Warna latar belakang kontainer (Jingga muda) */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            box-sizing: border-box;
-            width: auto; 
-        }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+    }
 
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: center;
-        }
+    
 
-        th {
-            background-color: #f2f2f2;
-        }
+    .btn {
+        /* Gaya tombol yang sama seperti sebelumnya */
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
 
-        /* Responsivitas untuk tampilan mobile */
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px; 
-                padding: 15px; 
-            }
+    .btn:hover {
+        background-color: #f2f2f2;
+    }
 
-            h1 {
-                font-size: 28px; 
-            }
+    .btn-primary {
+        background-color: #FFA500; 
+        color: black;
+        font-weight: bold;
+    }
 
-            th, td {
-                padding: 8px; 
-                font-size: 14px; /* Ukuran font yang lebih kecil */
-            }
+    .btn-back {
+        background-color: black;
+        color: orange;
+        font-weight: bold;
+    }
 
-            .btn {
-                font-size: 14px; 
-                padding: 8px; 
-            }
+    .btn-info {
+        background-color: #FFD700; 
+        color: black;
+    }
 
-            table {
-                font-size: 14px; 
-            }
-        }
+  
+    .btn-danger {
+        background-color: #DC143C; 
+        color: #fff;
+    }
 
-        /* Menambahkan div untuk mengatur overflow */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto; /* Memungkinkan scroll horizontal jika diperlukan */
-        }
-    </style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
 </head>
 <body>
     <div class="container">
@@ -116,44 +151,50 @@
                 <a href="login.php" class="btn btn-back">Logout</a>
             </div>
         </header>
-        <div class="table-responsive"> <!-- Kontainer untuk tabel -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nomor</th>
-                        <th>Judul</th>
-                        <th>Author</th>
-                        <th>Genre</th>
-                        <th>COVER</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data tabel ditampilkan di sini -->
-                    <?php
-                    // Assuming you have a way to fetch the book data
-                    $sqlSelect = "SELECT * FROM book";
-                    $result = mysqli_query($conn, $sqlSelect);
-                    $counter = 1;
-                    while ($data = mysqli_fetch_array($result)) {
-                        echo "<tr>
-                                <td>{$counter}</td>
-                                <td>{$data['title']}</td>
-                                <td>{$data['author']}</td>
-                                <td>{$data['type']}</td>
-                                <td><img src='{$data['COVER']}' alt='Book Cover' style='width: 50px; height: auto;'></td>
-                                <td>
-                                    <a href='view.php?id={$data['id']}' class='btn btn-info'>Baca disini</a>
-                                    <a href='edit.php?id={$data['id']}' class='btn btn-warning'>Edit</a>
-                                    <a href='delete.php?id={$data['id']}' class='btn btn-danger'>Hapus</a>
-                                </td>
-                            </tr>";
-                        $counter++;
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+
+        <!-- Your existing code for displaying success messages -->
+
+        <table>
+    <thead>
+        <tr>
+            <th>nomor</th>
+            <th>Judul</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>COVER</th> <!-- New column for the cover image -->
+            <th>Action</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <?php
+        $sqlSelect = "SELECT * FROM book";
+        $result = mysqli_query($conn, $sqlSelect);
+        $counter = 1; // Inisialisasi variabel counter
+        while ($data = mysqli_fetch_array($result)) {
+            $book = new Book($data['id'], $data['title'], $data['author'], $data['type'], $data['COVER']); // Assuming 'file_temp' is the column name in your database
+        ?>
+            <tr>
+                <td><?php echo $counter; ?></td>
+                <td><?php echo $book->title; ?></td>
+                <td><?php echo $book->author; ?></td>
+                <td><?php echo $book->type; ?></td>
+                <td>
+                    <!-- Display the image -->
+                    <img src="<?php echo $book->file_temp; ?>" alt="Book Cover" style="width: 50px; height: auto;">
+                </td>
+                <td>
+                    <a href="view.php?id=<?php echo $book->id; ?>" class="btn btn-info">Baca disini</a>
+                    <a href="edit.php?id=<?php echo $book->id; ?>" class="btn btn-warning">Edit</a>
+                    <a href="delete.php?id=<?php echo $book->id; ?>" class="btn btn-danger">Hapus</a>
+                </td>
+            </tr>
+        <?php
+            $counter++; // Increment counter setiap kali loop
+        }
+        ?>
+    </tbody>
+</table>
     </div>
 </body>
 </html>

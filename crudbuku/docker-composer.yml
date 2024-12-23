@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  php:
+    image: dongeng:1  # Update the image to the correct version
+    container_name: php-container  # Keep or change if necessary to avoid conflict
+    ports:
+      - "8088:80"  # Exposes port 80 in the container to port 8088 on your host
+    volumes:
+      - ./crudbuku:/var/www/html  # Update if the source directory changes
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7  # You can also use a specific version of MySQL if needed
+    container_name: mysql-container2  # Keep or change the name if conflict occurs
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crudbuku  # Optional, if you want an automatic database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"  # Host port 3307 -> Container port 3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest  # You can specify a version if needed
+    container_name: phpmyadmin-container2  # Change the name to avoid conflicts
+    restart: always
+    ports:
+      - "8089:80"  # Exposes port 80 in phpmyadmin container to port 8089 on the host
+    environment:
+      PMA_HOST: db  # Points to the MySQL service
+      MYSQL_ROOT_PASSWORD: root
