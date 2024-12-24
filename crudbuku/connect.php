@@ -1,8 +1,8 @@
 <?php
-$dbName = "buku";
-$dbHost = "localhost";
-$dbUser = "root";
-$dbPass = "";
+$dbName = "crudbuku";
+$dbHost = "db";     //nama service dari docker-composer.yml
+$dbUser = "user";
+$dbPass = "password";
 $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
 
 if (!$conn) {
