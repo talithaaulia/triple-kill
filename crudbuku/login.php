@@ -1,236 +1,183 @@
 <?php
-// Assuming 'connect.php' is included
-include('connect.php');
+session_start();
 
-class Book {
-    public $id;
-    public $title;
-    public $author;
-    public $type;
-    public $file_temp; // Renamed property for the temporary file
+class LoginHandler
+{
+    private $conn;
 
-    public function __construct($id, $title, $author, $type, $file_temp) {
-        $this->id = $id;
-        $this->title = $title;
-        $this->author = $author;
-        $this->type = $type;
-        $this->file_temp = $file_temp; // Assign the temporary file path
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
     }
 
-    public function displayInfo() {
-        echo "ID: $this->id, Title: $this->title, Author: $this->author, Type: $this->type";
+    public function handleLogin()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $username = mysqli_real_escape_string($this->conn, $_POST["username"]);
+            $password = mysqli_real_escape_string($this->conn, $_POST["password"]);
+
+            $userValidator = new UserValidator($this->conn);
+            $loginResult = $userValidator->validateLogin($username, $password);
+
+            if ($loginResult['success']) {
+                $this->redirectUser($username);
+            } else {
+                $this->handleError($loginResult['error']);
+            }
+        }
+    }
+
+    private function redirectUser($username)
+    {
+        if ($username === "admin") {
+            header("Location: admin.php");
+        } else {
+            header("Location: user.php");
+        }
+        exit();
+    }
+
+    private function handleError($error)
+    {
+        header("Location: login.php?error=$error");
+        exit();
     }
 }
+
+class UserValidator
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function validateLogin($username, $password)
+    {
+        $result = ['success' => false, 'error' => ''];
+
+        $sql = "SELECT * FROM admin1 WHERE username = '$username'";
+        $queryResult = mysqli_query($this->conn, $sql);
+        $user = mysqli_fetch_assoc($queryResult);
+
+        if ($user && password_verify($password, $user['password'])) {
+            $result['success'] = true;
+        } else {
+            $result['error'] = ($user) ? 'invalid_password' : 'invalid_username';
+        }
+
+        return $result;
+    }
+}
+
+require_once 'connect.php';
+
+$loginHandler = new LoginHandler($conn);
+
+$loginHandler->handleLogin();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Dongeng</title>
+    <title>Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('perpustakaan.jpg'); /* Menggunakan gambar sebagai latar belakang */
-            background-size: cover; /* Menutupi seluruh area latar belakang */
-            background-position: center; /* Posisi gambar di tengah */
-            color: #000; /* Warna teks hitam agar kontras dengan latar belakang gambar */
-            margin: 0;
+            margin: 100px;
             padding: 0;
+            background-image: url("lib6.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         h1 {
-            margin: 0;
-            color: black; /* Warna teks judul, bisa disesuaikan */
-            font-size: 36px; /* Ukuran font judul */
-        }
-
-        .btn-warning {
-            background-color: #FFA500; /* Jingga */
-            color: black; /* Putih agar kontras dengan latar belakang oranye */
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 800px; /* Batas maksimum lebar kontainer */
-            margin: 20px; /* Mengurangi margin agar lebih responsif */
-            background-color: rgba(255, 255, 255, 0.9); /* Warna latar belakang kontainer (putih) dengan transparansi */
-            padding: 20px; /* Padding disesuaikan */
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%; /* Lebar kontainer diubah menjadi 90% untuk tampilan mobile */
-            box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%; /* Pastikan header memenuhi lebar kontainer */
-            margin-top: 40px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
             text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
-            width: auto; /* Ubah lebar tombol ke auto */
-        }
-
-        .btn:hover {
-            background-color: #f2f2f2;
-        }
-
-        .btn-primary {
-            background-color: #FFA500; 
             color: black;
-            font-weight: bold;
         }
 
-        .btn-back {
+        p {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        li {
+            display: inline;
+        }
+
+        a:hover {
+            background-color: wheat;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: orange;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        input[type="submit"] {
             background-color: black;
             color: orange;
-            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .btn-info {
-            background-color: #FFD700; 
-            color: black;
-        }
-
-        .btn-danger {
-            background-color: #DC143C; 
-            color: #fff;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Container untuk tabel agar responsif */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto; /* Membuat tabel dapat digulir secara horizontal */
-            -webkit-overflow-scrolling: touch; /* Untuk mendukung scrolling halus pada perangkat sentuh */
-        }
-
-        /* Media queries untuk responsif */
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px; /* Margin diubah untuk lebih rapi di layar kecil */
-                padding: 15px; /* Padding disesuaikan */
-            }
-
-            h1 {
-                font-size: 28px; /* Ukuran font judul yang lebih kecil untuk tampilan mobile */
-            }
-
-            th, td {
-                padding: 8px; /* Padding sel tabel yang lebih kecil */
-            }
-
-            .btn {
-                font-size: 14px; /* Ukuran font tombol yang lebih kecil */
-                padding: 8px; /* Padding tombol yang lebih kecil */
-                width: auto; /* Mengubah lebar tombol ke auto */
-            }
-        }
-
-        img {
-            max-width: 100%; /* Memastikan gambar tidak melebihi lebar kolom */
-            height: auto; /* Mempertahankan rasio aspek */
+        input[type="submit"]:hover {
+            background-color: darkblue;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Daftar Dongeng</h1>
-            <div>
-                <a href="create.php" class="btn btn-primary">Tambah Dongeng Baru</a>
-                <a href="login.php" class="btn btn-back">Logout</a>
-            </div>
-        </header>
-
-        <!-- Your existing code for displaying success messages -->
-
-        <div class="table-responsive"> <!-- Tambahkan div ini untuk membuat tabel responsif -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>nomor</th>
-                        <th>Judul</th>
-                        <th>Author</th>
-                        <th>Genre</th>
-                        <th>COVER</th> <!-- New column for the cover image -->
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $sqlSelect = "SELECT * FROM book";
-                    $result = mysqli_query($conn, $sqlSelect);
-                    $counter = 1; // Inisialisasi variabel counter
-                    while ($data = mysqli_fetch_array($result)) {
-                        $book = new Book($data['id'], $data['title'], $data['author'], $data['type'], $data['COVER']); // Assuming 'file_temp' is the column name in your database
-                    ?>
-                        <tr>
-                            <td><?php echo $counter; ?></td>
-                            <td><?php echo $book->title; ?></td>
-                            <td><?php echo $book->author; ?></td>
-                            <td><?php echo $book->type; ?></td>
-                            <td>
-                                <!-- Display the image -->
-                                <img src="<?php echo $book->file_temp; ?>" alt="Book Cover" style="width: 50px; height: auto;">
-                            </td>
-                            <td>
-                                <a href="view.php?id=<?php echo $book->id; ?>" class="btn btn-info">Baca disini</a>
-                                <a href="edit.php?id=<?php echo $book->id; ?>" class="btn btn-warning">Edit</a>
-                                <a href="delete.php?id=<?php echo $book->id; ?>" class="btn btn-danger">Hapus</a>
-                            </td>
-                        </tr>
-                    <?php
-                        $counter++; // Increment counter setiap kali loop
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <h1>Login</h1>
+    <form action="login.php" method="post">
+        <?php
+            // Tampilkan pesan error jika ada
+            if (isset($_GET['error']) && $_GET['error'] == 'invalid_username') {
+                echo '<p>Invalid username</p>';
+            } elseif (isset($_GET['error']) && $_GET['error'] == 'invalid_password') {
+                echo '<p>Invalid password</p>';
+            }
+        ?>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <text>Belum punya akun? <a href="register.php">Register</a> disini</text>
+        <br>
+        <input type="submit" value="Login">
+    </form>
 </body>
 </html>

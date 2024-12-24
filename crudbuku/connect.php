@@ -1,30 +1,37 @@
 <?php
+// Konfigurasi database
 $dbName = "crudbuku";
-$dbHost = "db";     //nama service dari docker-composer.yml
+$dbHost = "db"; // Nama service dari docker-compose.yml
 $dbUser = "user";
 $dbPass = "password";
+
+// Membuat koneksi
 $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
 
+// Cek koneksi
 if (!$conn) {
-    die("Something went wrong");
+    die("Connection failed: " . mysqli_connect_error());
 }
-
-// Perform deletion
-$deletedId = 42; // Replace with the actual ID you want to delete
+// ID yang ingin dihapus
+$deletedId = 42; // Ganti dengan ID yang ingin dihapus
 $sqlDelete = "DELETE FROM book WHERE id = $deletedId";
-mysqli_query($conn, $sqlDelete);
 
-// Optionally reset auto-increment
-$tableName = "book"; // Replace with your actual table name
-$sqlResetAutoIncrement = "ALTER TABLE $tableName AUTO_INCREMENT = 1";
-mysqli_query($conn, $sqlResetAutoIncrement);
-
-
-// Reset the auto-increment value for the table
-$tableName = "book"; // Replace with your actual table name
-$sql = "ALTER TABLE $tableName AUTO_INCREMENT = 1";
-mysqli_query($conn, $sql);
-if (!$conn) {
-    die("Something went wrong");
+if (mysqli_query($conn, $sqlDelete)) {
+    echo "Record with ID $deletedId has been deleted.<br>";
+} else {
+    echo "Error deleting record: " . mysqli_error($conn) . "<br>";
 }
+
+// Reset auto-increment
+$tableName = "book"; // Ganti dengan nama tabel Anda
+$sqlResetAutoIncrement = "ALTER TABLE $tableName AUTO_INCREMENT = 1";
+
+if (mysqli_query($conn, $sqlResetAutoIncrement)) {
+    echo "Auto-increment reset successfully for table $tableName.<br>";
+} else {
+    echo "Error resetting auto-increment: " . mysqli_error($conn) . "<br>";
+}
+
+// Tutup koneksi
+mysqli_close($conn);
 ?>
