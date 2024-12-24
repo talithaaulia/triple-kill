@@ -37,64 +37,83 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 300px;
-            padding: 0;
-            background-image: url("lib10.jpg");
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
+ body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("lib10.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh; /* Ensure full height */
+}
 
-        h1 {
-            text-align: center;
-            font-weight: bold;
-            color: orange;
-            font-family: 'Gill Sans', 'Gill Sans MT',  'Trebuchet MS', sans-serif;
-            font-size: 40px;
-        }
+h1 {
+    text-align: center;
+    font-weight: bold;
+    color: orange;
+    font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+    font-size: 3vw; /* Responsive font size */
+}
 
-        form {
-            max-width: 300px;
-            margin: 20px auto;
-            padding: 30px;
-            background-color: orange;
-            color: black;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+form {
+    max-width: 400px; /* Limit max width */
+    width: 90%; /* Allow form to take up 90% of screen width */
+    margin: 20px auto;
+    padding: 30px;
+    background-color: orange;
+    color: black;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Ensures padding is included in the width */
+}
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
+label {
+    display: block;
+    margin-bottom: 8px;
+}
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box; /* Ensure padding is included in the width */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
-        input[type="submit"] {
-            background-color: black;
-            color: orange;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
+input[type="submit"] {
+    background-color: black;
+    color: orange;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+}
 
-        input[type="submit"]:hover {
-            background-color: navy;
-        }
+input[type="submit"]:hover {
+    background-color: navy;
+}
 
-        .error-message {
-            color: red;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Media Queries for smaller devices */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 6vw; /* Adjust font size for small screens */
+    }
+
+    form {
+        padding: 20px; /* Less padding on smaller screens */
+    }
+
+    input {
+        padding: 8px; /* Smaller padding for inputs */
+    }
+}
+
     </style>
 </head>
 <body>
@@ -108,10 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
-        <br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        <br>
         <input type="submit" value="Register">
     </form>
 </body>
